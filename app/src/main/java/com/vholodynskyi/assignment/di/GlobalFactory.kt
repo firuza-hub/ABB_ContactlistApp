@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import com.vholodynskyi.assignment.api.RetrofitServicesProvider
-import com.vholodynskyi.assignment.api.contacts.ContactsService
-import com.vholodynskyi.assignment.db.AppDatabase
+import com.vholodynskyi.assignment.data.remote.api.RetrofitServicesProvider
+import com.vholodynskyi.assignment.data.remote.api.contacts.ContactsService
+import com.vholodynskyi.assignment.data.local.db.AppDatabase
+import com.vholodynskyi.assignment.data.remote.repository.ContactsRepository
+import com.vholodynskyi.assignment.data.remote.repository.ContactsRepositoryImpl
 import com.vholodynskyi.assignment.ui.contactslist.ContactsListViewModel
 import com.vholodynskyi.assignment.ui.details.DetailsViewModel
 
@@ -14,6 +16,11 @@ object GlobalFactory: ViewModelProvider.Factory {
 
     val service: ContactsService by lazy {
         RetrofitServicesProvider().contactsService
+    }
+
+
+    val repository: ContactsRepository by lazy {
+        ContactsRepositoryImpl(service)
     }
 
     lateinit var db: AppDatabase

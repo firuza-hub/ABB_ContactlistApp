@@ -3,7 +3,10 @@ package com.vholodynskyi.assignment.ui.contactslist
 import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.vholodynskyi.assignment.databinding.ItemContactListBinding
 
 class ContactAdapter (
@@ -11,7 +14,7 @@ class ContactAdapter (
     private val onItemClicked: ItemClick
 ) : RecyclerView.Adapter<ViewHolder>() {
 
-    var items: List<String> = listOf("Text")
+    var items: List<ContactModel> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -26,9 +29,13 @@ class ContactAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         with(holder.binding) {
-            text.text = items[position]
+            tvName.text = item.name
+            tvEmail.text = item.email
+            if(!item.picture.isNullOrEmpty())
+                setImage(ivPicture, item.picture)
+
             root.setOnClickListener {
-                onItemClicked(item)
+                onItemClicked(item.id)
             }
         }
     }
@@ -37,7 +44,12 @@ class ContactAdapter (
         return items.size
     }
 }
-
+fun setImage(view:ImageView,imageUrl:String ) {
+    Glide.with(view.context)
+        .load(imageUrl)
+        .apply(RequestOptions().fitCenter().circleCrop())
+        .into(view)
+}
 class ViewHolder (val binding: ItemContactListBinding) : RecyclerView.ViewHolder(binding.root)
 
 typealias ItemClick = (String) -> Unit

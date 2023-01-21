@@ -1,6 +1,6 @@
-package com.vholodynskyi.assignment.api
+package com.vholodynskyi.assignment.data.remote.api
 
-import com.vholodynskyi.assignment.api.contacts.ContactsService
+import com.vholodynskyi.assignment.data.remote.api.contacts.ContactsService
 import com.squareup.moshi.Moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory

@@ -5,9 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vholodynskyi.assignment.databinding.FragmentContactsListBinding
+import com.vholodynskyi.assignment.di.GlobalFactory
 
 open class ContactsListFragment : Fragment() {
 
@@ -24,6 +28,7 @@ open class ContactsListFragment : Fragment() {
     }
 
     private var binding: FragmentContactsListBinding? = null
+    private val viewModel = GlobalFactory.create(ContactsListViewModel::class.java)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +40,7 @@ open class ContactsListFragment : Fragment() {
             .apply {
                 contactList.layoutManager = LinearLayoutManager(context)
                 contactList.adapter = contactAdapter
+                viewModel.contacts.observe(viewLifecycleOwner) { contactAdapter.items = it }
             }
             .also {
                 binding = it

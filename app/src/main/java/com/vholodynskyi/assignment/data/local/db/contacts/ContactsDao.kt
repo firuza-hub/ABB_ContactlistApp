@@ -1,4 +1,4 @@
-package com.vholodynskyi.assignment.db.contacts
+package com.vholodynskyi.assignment.data.local.db.contacts
 
 import androidx.room.*
 

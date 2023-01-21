@@ -1,4 +1,4 @@
-package com.vholodynskyi.assignment.api.contacts
+package com.vholodynskyi.assignment.data.remote.api.dto.contactList
 
 import com.squareup.moshi.JsonClass
 

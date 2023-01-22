@@ -5,4 +5,8 @@ data class ContactModel(
     val name: String,
     val email: String,
     val picture: String?
-)
+){
+    companion object{
+        val NULL = ContactModel("", "", "", null)
+    }
+}

@@ -11,6 +11,9 @@
         </action>
     </fragment>
     <fragment android:name="com.vholodynskyi.assignment.ui.details.DetailsFragment" android:id="@+id/details">
-        <argument android:name="id" app:argType="string" app:nullable="true"/>
+        <argument android:name="id" app:argType="string" />
+        <action
+            android:id="@+id/action_details_to_contactList"
+            app:destination="@id/contactList" />
     </fragment>
 </navigation>

@@ -28,7 +28,7 @@ open class ContactsListFragment : Fragment() {
     }
 
     private var binding: FragmentContactsListBinding? = null
-    private val viewModel = GlobalFactory.create(ContactsListViewModel::class.java)
+    private val viewModel by viewModels<ContactsListViewModel> { GlobalFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,12 +40,20 @@ open class ContactsListFragment : Fragment() {
             .apply {
                 contactList.layoutManager = LinearLayoutManager(context)
                 contactList.adapter = contactAdapter
-                viewModel.contacts.observe(viewLifecycleOwner) { contactAdapter.items = it }
+                viewModel.contacts.observe(viewLifecycleOwner) {
+                    contactAdapter.items = it
+                    if (it.isNullOrEmpty()) viewModel.refreshDbContacts()
+                }
             }
             .also {
                 binding = it
             }
             .root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //viewModel.fetchContacts()
     }
 
     override fun onDestroyView() {

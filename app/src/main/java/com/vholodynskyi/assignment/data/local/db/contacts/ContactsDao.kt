@@ -23,4 +23,7 @@ interface ContactsDao {
 
     @Query("DELETE FROM Contact WHERE isDeleted = 0")
     suspend fun clearAllActive()
+
+    @Query("SELECT * FROM Contact where userId == (:id) and isDeleted = 0")
+    fun getActiveContactById(id: String):Flow<DbContact>
 }

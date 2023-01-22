@@ -5,11 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vholodynskyi.assignment.data.remote.repository.ContactsRepository
-import com.vholodynskyi.assignment.data.remote.repository.ContactsRepositoryImpl
-import com.vholodynskyi.assignment.di.GlobalFactory
+import com.vholodynskyi.assignment.data.repository.ContactsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ContactsListViewModel(private val repo: ContactsRepository): ViewModel() {
@@ -19,17 +17,27 @@ class ContactsListViewModel(private val repo: ContactsRepository): ViewModel() {
         get() = _contacts
 
     init {
-        fetchContacts()
+        fetchDbContacts()
     }
 
-    private fun fetchContacts(){
-        viewModelScope.launch {
+    fun refreshDbContacts(){
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                repo.fetchContacts()
-                    .collect { data -> _contacts.value = data }
+                repo.refreshDbContacts()
+            } catch (ex:Exception){
+                Log.e("REFRESH_FROM_REMOTE", ex.message.toString())
+            }
+        }
+    }
+
+    private fun fetchDbContacts(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repo.fetchDbContacts()
+                    .collect { data -> _contacts.postValue(data) }
 
             } catch (ex:Exception){
-                Log.e("FETCH_LIST", ex.message.toString())
+                Log.e("FETCH_LIST_LOCAL", ex.message.toString())
             }
         }
     }

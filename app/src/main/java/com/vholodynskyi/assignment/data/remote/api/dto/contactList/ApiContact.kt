@@ -33,7 +33,7 @@ data class ApiContact(
         firstName = name.first,
         lastName = name.last,
         email = email ?: "",
-        photo = picture.medium,
+        photo = picture.large,
         isDeleted = false
     )
 }

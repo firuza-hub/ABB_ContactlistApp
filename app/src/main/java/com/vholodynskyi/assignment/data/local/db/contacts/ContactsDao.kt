@@ -1,21 +1,26 @@
 package com.vholodynskyi.assignment.data.local.db.contacts
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.IGNORE
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ContactsDao {
     @Query("SELECT * FROM Contact")
-    suspend fun getContacts(): List<DbContact>
+    fun getContacts(): Flow<List<DbContact>>
 
     @Update
     suspend fun update(contact: DbContact)
 
-    @Insert
+    @Insert(onConflict = IGNORE)
     suspend fun addAll(contact: List<DbContact>)
 
-    @Query("DELETE FROM Contact WHERE id = (:contactId)")
-    suspend fun deleteById(contactId: Int)
+    @Query("UPDATE  Contact SET isDeleted = 1 WHERE userId = (:uuid)")
+    suspend fun deleteById(uuid: Int)
 
-    @Query("DELETE FROM Contact")
+    @Query("UPDATE Contact SET isDeleted = 1")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM Contact WHERE isDeleted = 0")
+    suspend fun clearAllActive()
 }

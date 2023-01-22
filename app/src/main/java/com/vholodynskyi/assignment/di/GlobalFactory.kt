@@ -14,13 +14,13 @@ import com.vholodynskyi.assignment.ui.details.DetailsViewModel
 
 object GlobalFactory: ViewModelProvider.Factory {
 
-    val service: ContactsService by lazy {
+    private val service: ContactsService by lazy {
         RetrofitServicesProvider().contactsService
     }
 
 
-    val repository: ContactsRepository by lazy {
-        ContactsRepositoryImpl(service)
+    private val repository: ContactsRepository by lazy {
+        ContactsRepositoryImpl(service, db)
     }
 
     lateinit var db: AppDatabase
@@ -33,9 +33,9 @@ object GlobalFactory: ViewModelProvider.Factory {
         ).build()
     }
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when (modelClass) {
-            ContactsListViewModel::class.java -> ContactsListViewModel()
+            ContactsListViewModel::class.java -> ContactsListViewModel(repository)
             DetailsViewModel::class.java -> DetailsViewModel()
             else -> throw IllegalArgumentException("Cannot create factory for ${modelClass.simpleName}")
         } as T

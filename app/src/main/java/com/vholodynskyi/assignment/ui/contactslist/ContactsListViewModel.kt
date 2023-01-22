@@ -5,27 +5,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vholodynskyi.assignment.data.remote.repository.ContactsRepository
+import com.vholodynskyi.assignment.data.remote.repository.ContactsRepositoryImpl
 import com.vholodynskyi.assignment.di.GlobalFactory
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class ContactsListViewModel: ViewModel() {
+class ContactsListViewModel(private val repo: ContactsRepository): ViewModel() {
 
     private val _contacts= MutableLiveData<List<ContactModel>>()
     val contacts: LiveData<List<ContactModel>>
         get() = _contacts
 
-    private val repo = GlobalFactory.repository
     init {
-        getContacts()
+        fetchContacts()
     }
-    private fun getContacts(){
+
+    private fun fetchContacts(){
         viewModelScope.launch {
             try {
-                repo.getContacts().map { r ->
-                    r.results?.map { it.toModel() }
-                }
+                repo.fetchContacts()
                     .collect { data -> _contacts.value = data }
 
             } catch (ex:Exception){

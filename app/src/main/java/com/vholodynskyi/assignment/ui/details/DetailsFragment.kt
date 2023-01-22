@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.collect
 
 
 open class DetailsFragment : Fragment() {
-    private lateinit var binding: FragmentDetailsBinding
+    private  var binding: FragmentDetailsBinding? = null
     private val args: DetailsFragmentArgs by navArgs()
     private val detailsViewModel by viewModels<DetailsViewModel> { GlobalFactory }
 
@@ -41,16 +41,15 @@ open class DetailsFragment : Fragment() {
         return FragmentDetailsBinding.inflate(layoutInflater, container, false)
             .also {
                 binding = it
-                binding.btnBack.setOnClickListener{
-                    findNavController()
-                    .navigate(DetailsFragmentDirections.actionDetailsToContactList())}
+                binding!!.btnBack.setOnClickListener{
+                    findNavController().navigateUp()}
 
                 lifecycleScope.launchWhenCreated {
                     detailsViewModel.contact.collect { data ->
-                        binding.tvName.text = data.name
-                        binding.tvEmail.text = data.email
+                        binding!!.tvName.text = data.name
+                        binding!!.tvEmail.text = data.email
                         if (data.picture != null) {
-                            setImage(binding.ivAvatarImage, data.picture)
+                            setImage(binding!!.ivAvatarImage, data.picture)
                         }
                     }
                 }
@@ -60,9 +59,10 @@ open class DetailsFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        binding = null
     }
 
-    fun setImage(view: ImageView, imageUrl: String) {
+    private fun setImage(view: ImageView, imageUrl: String) {
         Glide.with(view.context)
             .load(imageUrl)
             .apply(RequestOptions().fitCenter().centerCrop())

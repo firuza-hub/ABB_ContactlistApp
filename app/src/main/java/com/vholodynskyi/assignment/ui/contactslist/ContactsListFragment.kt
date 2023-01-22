@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.vholodynskyi.assignment.databinding.FragmentContactsListBinding
 import com.vholodynskyi.assignment.di.GlobalFactory
 
 open class ContactsListFragment : Fragment() {
 
+    private lateinit var swipeRefreshLayout:SwipeRefreshLayout
     private val contactAdapter: ContactAdapter by lazy {
         ContactAdapter(
             requireActivity(),
@@ -42,7 +44,6 @@ open class ContactsListFragment : Fragment() {
                 contactList.adapter = contactAdapter
                 viewModel.contacts.observe(viewLifecycleOwner) {
                     contactAdapter.items = it
-                    if (it.isNullOrEmpty()) viewModel.refreshDbContacts()
                 }
             }
             .also {
@@ -53,11 +54,17 @@ open class ContactsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel.fetchContacts()
+        swipeRefreshLayout = binding?.root!!
+        swipeRefreshLayout.setOnRefreshListener {
+            swipeRefreshLayout.isRefreshing = false
+            viewModel.refreshDbContacts()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
     }
+
+
 }

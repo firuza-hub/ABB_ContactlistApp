@@ -26,10 +26,17 @@ class DetailsViewModel(private val repository: ContactsRepository) : ViewModel()
                 repository.getContactDetails(id).collect { contact.value = it }
             } catch (ex: Exception) {
                 Log.e("GET_CONTACT", ex.message.toString())
-                throw ex
+
             }
         }
 
+    }
+
+    fun delete() {
+        viewModelScope.launch {
+            if (id.isNotEmpty())
+                repository.delete(id)
+        }
     }
 }
 

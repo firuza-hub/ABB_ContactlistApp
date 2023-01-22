@@ -42,7 +42,14 @@ open class DetailsFragment : Fragment() {
             .also {
                 binding = it
                 binding!!.btnBack.setOnClickListener{
-                    findNavController().navigateUp()}
+                    findNavController().navigateUp()
+                }
+
+
+                binding!!.btnDelete.setOnClickListener {
+                    detailsViewModel.delete()
+                    findNavController().navigateUp()
+                }
 
                 lifecycleScope.launchWhenCreated {
                     detailsViewModel.contact.collect { data ->

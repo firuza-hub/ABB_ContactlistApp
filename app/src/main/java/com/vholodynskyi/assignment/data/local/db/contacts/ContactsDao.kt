@@ -18,6 +18,9 @@ interface ContactsDao {
     @Query("UPDATE  Contact SET isDeleted = 1 WHERE userId = (:uuid)")
     suspend fun deleteById(uuid: String)
 
+    @Query("UPDATE  Contact SET isDeleted = 0 WHERE userId = (:uuid)")
+    suspend fun repairById(uuid: String)
+
     @Query("UPDATE Contact SET isDeleted = 1")
     suspend fun deleteAll()
 

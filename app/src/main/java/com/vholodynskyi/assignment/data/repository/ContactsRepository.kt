@@ -8,4 +8,5 @@ interface ContactsRepository {
     suspend fun getContactDetails(id: String): Flow<ContactModel>
     suspend fun fetchDbContacts(): Flow<List<ContactModel>>
     suspend fun delete(id: String)
+    suspend fun repair(id: String)
 }

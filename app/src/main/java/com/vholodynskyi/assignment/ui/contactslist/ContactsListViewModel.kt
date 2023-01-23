@@ -30,6 +30,19 @@ class ContactsListViewModel(private val repo: ContactsRepository): ViewModel() {
         }
     }
 
+    fun deleteDbContact(id:String){
+        viewModelScope.launch {
+            repo.delete(id)
+        }
+    }
+
+
+    fun undoDeleteDbContact(id:String){
+        viewModelScope.launch {
+            repo.repair(id)
+        }
+    }
+
     private fun fetchDbContacts(){
         viewModelScope.launch(Dispatchers.IO) {
             try {

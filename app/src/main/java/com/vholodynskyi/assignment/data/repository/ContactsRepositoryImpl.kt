@@ -31,6 +31,9 @@ class ContactsRepositoryImpl(private val service: ContactsService, private val d
     override suspend fun delete(id: String) {
         db.userDao().deleteById(id)
     }
+    override suspend fun repair(id: String) {
+        db.userDao().repairById(id)
+    }
 
     private suspend fun refreshDbData(data: List<DbContact>?) {
         if (data != null) {

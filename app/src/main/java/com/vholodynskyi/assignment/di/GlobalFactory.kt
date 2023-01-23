@@ -11,15 +11,15 @@ import com.vholodynskyi.assignment.data.repository.ContactsRepository
 import com.vholodynskyi.assignment.data.repository.ContactsRepositoryImpl
 import com.vholodynskyi.assignment.ui.contactslist.ContactsListViewModel
 import com.vholodynskyi.assignment.ui.details.DetailsViewModel
+import com.vholodynskyi.assignment.util.MyLazy
 
 object GlobalFactory: ViewModelProvider.Factory {
 
-    private val service: ContactsService by lazy {
+     private val service: ContactsService by MyLazy {
         RetrofitServicesProvider().contactsService
     }
 
-
-    private val repository: ContactsRepository by lazy {
+    private val repository: ContactsRepository by MyLazy {
         ContactsRepositoryImpl(service, db)
     }
 

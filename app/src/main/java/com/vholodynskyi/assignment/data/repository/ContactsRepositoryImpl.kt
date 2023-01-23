@@ -7,8 +7,7 @@ import com.vholodynskyi.assignment.ui.contactslist.ContactModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ContactsRepositoryImpl(private val service: ContactsService, private val db: AppDatabase) :
-    ContactsRepository {
+class ContactsRepositoryImpl(private val service: ContactsService, private val db: AppDatabase) : ContactsRepository {
 
     override suspend fun refreshDbContacts() {
         try {

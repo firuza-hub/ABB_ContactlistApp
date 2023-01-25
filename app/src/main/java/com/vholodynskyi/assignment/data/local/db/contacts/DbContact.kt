@@ -2,10 +2,8 @@ package com.vholodynskyi.assignment.data.local.db.contacts
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.vholodynskyi.assignment.ui.contactslist.ContactModel
-import java.util.function.UnaryOperator
+import com.vholodynskyi.assignment.domain.model.ContactModel
 
 @Entity(tableName = "Contact")
 data class DbContact(

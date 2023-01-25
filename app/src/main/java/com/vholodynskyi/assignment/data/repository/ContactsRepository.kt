@@ -1,6 +1,6 @@
 package com.vholodynskyi.assignment.data.repository
 
-import com.vholodynskyi.assignment.ui.contactslist.ContactModel
+import com.vholodynskyi.assignment.domain.model.ContactModel
 import kotlinx.coroutines.flow.Flow
 
 interface ContactsRepository {

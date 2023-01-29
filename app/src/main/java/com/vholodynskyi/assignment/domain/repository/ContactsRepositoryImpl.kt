@@ -19,6 +19,10 @@ class ContactsRepositoryImpl(private val service: ContactsService, private val d
             throw ex
         }
     }
+    override suspend fun isDBEmpty(): Boolean {
+        return db.userDao().isDBEmpty()
+
+    }
 
     override suspend fun getContactDetails(id: String): Flow<ContactModel> {
         return db.userDao().getActiveContactById(id).map { it.toModel() }

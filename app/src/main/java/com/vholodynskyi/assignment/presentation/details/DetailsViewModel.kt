@@ -20,7 +20,6 @@ class DetailsViewModel(
 
     val contact = MutableStateFlow(ContactModel.NULL)
 
-
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
             if (id.isEmpty()) {

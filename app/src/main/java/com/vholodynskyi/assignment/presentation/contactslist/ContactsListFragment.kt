@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -15,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.vholodynskyi.assignment.databinding.FragmentContactsListBinding
-import com.vholodynskyi.assignment.di.GlobalFactory
 import com.vholodynskyi.assignment.domain.model.ContactModel
 import com.vholodynskyi.assignment.util.Event
 import kotlinx.coroutines.flow.collect
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 open class ContactsListFragment : Fragment() {
 
@@ -37,7 +36,7 @@ open class ContactsListFragment : Fragment() {
     }
 
     private var binding: FragmentContactsListBinding? = null
-    private val viewModel by viewModels<ContactsListViewModel> { GlobalFactory }
+    private val viewModel by viewModel<ContactsListViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

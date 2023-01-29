@@ -37,20 +37,21 @@ class ContactsListViewModel(
     }
 
     fun deleteDbContact(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.delete(id)
         }
     }
 
 
     fun undoDeleteDbContact(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.repair(id)
         }
     }
 
     private fun fetchDbContacts() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+
             getContactsUseCase().collect {
                 NetworkResult.handle(it, "FETCH_LIST_LOCAL") { result ->
                     _contacts.postValue(result)

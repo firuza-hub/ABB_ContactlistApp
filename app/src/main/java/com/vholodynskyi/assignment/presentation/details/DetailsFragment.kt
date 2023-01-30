@@ -29,7 +29,7 @@ open class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         detailsViewModel.id = args.id
-        detailsViewModel.getData ()
+        detailsViewModel.getData()
 
         lifecycleScope.launchWhenStarted {
             detailsViewModel.eventFlow.collect { event ->
@@ -42,7 +42,6 @@ open class DetailsFragment : Fragment() {
                         ).show()}
                 }
             }
-
         }
 
         return FragmentDetailsBinding.inflate(layoutInflater, container, false)

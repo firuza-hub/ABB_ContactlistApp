@@ -11,12 +11,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.getKoin
 
 class DetailsViewModel(
-    private val repository: ContactsRepository,
-    private val getContactUseCase: GetContactUseCase
+    private val repository: ContactsRepository
 ) : BaseViewModel() {
     var id: String = ""
+
+    //NOTE: Implemented this to test scoping to viewModel
+    private val myScope = getKoin().createScope(
+        "ScopeNameID", named("DetailsViewModel"))
+
+    private val getContactUseCase = myScope.get<GetContactUseCase>()
 
     val contact = MutableStateFlow(ContactModel.NULL)
 
@@ -42,6 +49,11 @@ class DetailsViewModel(
             if (id.isNotEmpty())
                 repository.delete(id)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        myScope.close()
     }
 }
 

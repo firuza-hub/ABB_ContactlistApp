@@ -9,11 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.vholodynskyi.assignment.databinding.FragmentDetailsBinding
 import com.vholodynskyi.assignment.util.Event
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -30,15 +32,17 @@ open class DetailsFragment : Fragment() {
         detailsViewModel.id = args.id
         detailsViewModel.getData()
 
-        lifecycleScope.launchWhenStarted {
-            detailsViewModel.eventFlow.collect { event ->
-                when (event) {
-                    is Event.ShowToaster -> {
-                        Toast.makeText(
-                            requireContext(),
-                            event.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                detailsViewModel.eventFlow.collect { event ->
+                    when (event) {
+                        is Event.ShowToaster -> {
+                            Toast.makeText(
+                                requireContext(),
+                                event.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             }

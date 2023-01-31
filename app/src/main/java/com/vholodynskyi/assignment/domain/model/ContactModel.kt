@@ -8,5 +8,6 @@ data class ContactModel(
 ){
     companion object{
         val NULL = ContactModel("", "", "", null)
+        val MOCK = ContactModel("1", "Name", "Email", "https://randomuser.me/api/portraits/women/21.jpg")
     }
 }

@@ -9,7 +9,6 @@ import com.vholodynskyi.assignment.util.Event
 import com.vholodynskyi.assignment.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.getKoin
@@ -21,7 +20,8 @@ class DetailsViewModel(
 
     //NOTE: Implemented this to test scoping to viewModel
     private val myScope = getKoin().createScope(
-        "ScopeNameID", named("DetailsViewModel"))
+        "ScopeNameID", named("DetailsViewModel")
+    )
 
     private val getContactUseCase = myScope.get<GetContactUseCase>()
 

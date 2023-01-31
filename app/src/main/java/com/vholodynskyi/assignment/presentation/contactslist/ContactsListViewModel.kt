@@ -10,6 +10,8 @@ import com.vholodynskyi.assignment.domain.model.ContactModel
 import com.vholodynskyi.assignment.domain.usecase.GetContactsUseCase
 import com.vholodynskyi.assignment.presentation.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -18,9 +20,13 @@ class ContactsListViewModel(
     private val getContactsUseCase: GetContactsUseCase
 ) : BaseViewModel() {
 
-    private val _contacts = MutableLiveData<List<ContactModel>>()
-    val contacts: LiveData<List<ContactModel>>
+    private val _contacts = MutableStateFlow<List<ContactModel>>(emptyList())
+    val contacts: StateFlow<List<ContactModel>>
         get() = _contacts
+
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading: StateFlow<Boolean>
+        get() = _isLoading
 
     init {
         fetchDbContacts()
@@ -29,9 +35,13 @@ class ContactsListViewModel(
     fun refreshDbContacts() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                _isLoading.value = true
                 repo.refreshDbContacts()
             } catch (ex: Exception) {
                 Log.e("REFRESH_FROM_REMOTE", ex.message.toString())
+            }
+            finally {
+                _isLoading.value = false
             }
         }
     }
@@ -54,7 +64,7 @@ class ContactsListViewModel(
 
             getContactsUseCase().collect {
                 NetworkResult.handle(it, "FETCH_LIST_LOCAL") { result ->
-                    _contacts.postValue(result)
+                    _contacts.value = result
                 }
             }
         }

@@ -18,7 +18,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 open class DetailsFragment : Fragment() {
-    private var binding: FragmentDetailsBinding? = null
     private val args: DetailsFragmentArgs by navArgs()
     private val detailsViewModel by viewModel<DetailsViewModel>()
     private lateinit var composeView: ComposeView
@@ -71,8 +70,4 @@ open class DetailsFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
-    }
 }

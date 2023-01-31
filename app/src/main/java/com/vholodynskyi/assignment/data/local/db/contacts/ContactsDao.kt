@@ -1,7 +1,7 @@
 package com.vholodynskyi.assignment.data.local.db.contacts
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import kotlinx.coroutines.flow.Flow
 
 @Dao

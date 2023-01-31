@@ -26,6 +26,7 @@ import coil.compose.AsyncImagePainter.State
 import coil.compose.rememberAsyncImagePainter
 import com.vholodynskyi.assignment.R
 import com.vholodynskyi.assignment.domain.model.ContactModel
+import com.vholodynskyi.assignment.util.noRippleClickable
 
 @Preview(showBackground = true)
 @Composable
@@ -64,7 +65,7 @@ fun BackButton(onBackClick: () -> Unit) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(end = 24.dp, top = 12.dp)
-                .clickable { onBackClick() },
+                .noRippleClickable { onBackClick() },
         )
 
     }

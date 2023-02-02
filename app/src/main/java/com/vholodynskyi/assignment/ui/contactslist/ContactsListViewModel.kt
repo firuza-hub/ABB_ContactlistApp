@@ -31,14 +31,14 @@ class ContactsListViewModel(private val repo: ContactsRepository): ViewModel() {
     }
 
     fun deleteDbContact(id:String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.delete(id)
         }
     }
 
 
     fun undoDeleteDbContact(id:String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.repair(id)
         }
     }

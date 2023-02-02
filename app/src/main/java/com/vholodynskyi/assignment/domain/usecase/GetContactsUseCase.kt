@@ -15,6 +15,8 @@ class GetContactsUseCase(private val repo: ContactsRepository) {
         try {
             emit(NetworkResult.Loading<List<ContactModel>>())
             coroutineScope {
+                if (repo.isDBEmpty())
+                    repo.refreshDbContacts()
                 repo.fetchDbContacts().map { NetworkResult.Success(it) }.collect { emit(it) }
             }
 

@@ -26,6 +26,9 @@ class ContactsRepositoryImpl(private val service: ContactsService, private val d
         val flow = db.userDao().getContacts()
         return flow.map { i -> i.filter { !it.isDeleted }.map { it.toModel() } }
     }
+    override suspend fun isDBEmpty(): Boolean {
+        return db.userDao().isDBEmpty()
+    }
 
     override suspend fun delete(id: String) {
         db.userDao().deleteById(id)

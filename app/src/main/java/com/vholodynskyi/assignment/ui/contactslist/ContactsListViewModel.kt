@@ -46,8 +46,12 @@ class ContactsListViewModel(private val repo: ContactsRepository): ViewModel() {
     private fun fetchDbContacts(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                if(repo.isDBEmpty())
+                    repo.refreshDbContacts()
+
                 repo.fetchDbContacts()
                     .collect { data -> _contacts.postValue(data) }
+
 
             } catch (ex:Exception){
                 Log.e("FETCH_LIST_LOCAL", ex.message.toString())

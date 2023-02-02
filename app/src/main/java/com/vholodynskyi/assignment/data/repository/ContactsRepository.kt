@@ -9,4 +9,5 @@ interface ContactsRepository {
     suspend fun fetchDbContacts(): Flow<List<ContactModel>>
     suspend fun delete(id: String)
     suspend fun repair(id: String)
+    suspend fun isDBEmpty(): Boolean
 }

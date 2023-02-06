@@ -57,7 +57,7 @@ open class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         composeView.setContent {
 
-            val state by detailsViewModel.contact.collectAsState()
+            val state by detailsViewModel.state.collectAsState()
 
             DetailsScreen(
                 state = state,
@@ -69,6 +69,10 @@ open class DetailsFragment : Fragment() {
                 onBackClick =
                 {
                     findNavController().navigateUp()
+                },
+                onSaveClick =
+                {n,e ->
+                    detailsViewModel.save()
                 }
             )
         }

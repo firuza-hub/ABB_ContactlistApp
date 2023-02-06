@@ -25,7 +25,7 @@ class DetailsViewModel(
 
     private val getContactUseCase = myScope.get<GetContactUseCase>()
 
-    val contact = MutableStateFlow(ContactModel.NULL)
+    val state = MutableStateFlow(ContactDetailsState())
 
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -38,7 +38,7 @@ class DetailsViewModel(
                 NetworkResult.handle(
                     it,
                     "GET_CONTACT"
-                ) { result -> contact.value = result }
+                ) { result -> state.value.contact = result }
             }
         }
 
@@ -48,6 +48,13 @@ class DetailsViewModel(
         viewModelScope.launch {
             if (id.isNotEmpty())
                 repository.delete(id)
+        }
+    }
+    fun save() {
+        println("NEW NAME - ${state.value.contact.name}")
+        viewModelScope.launch {
+            if (id.isNotEmpty())
+                repository.update(state.value.contact)
         }
     }
 

@@ -2,12 +2,12 @@ package com.vholodynskyi.assignment.presentation.details
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,18 +32,20 @@ import com.vholodynskyi.assignment.util.noRippleClickable
 @Preview(showBackground = true)
 @Composable
 fun DetailsScreen(
-    state: ContactModel = ContactModel.MOCK,
+    state: ContactDetailsState = ContactDetailsState(),
     onDeleteClick: () -> Unit = { println("delete") },
-    onBackClick: () -> Unit = { println("back") }
+    onBackClick: () -> Unit = { println("back") },
+    onSaveClick: (name: String, email: String) -> Unit = { _, _ -> println("save") }
 ) {
-    Screen(state, onBackClick, onDeleteClick)
+    Screen(state, onBackClick, onDeleteClick, onSaveClick)
 }
 
 @Composable
 fun Screen(
-    state: ContactModel,
+    state: ContactDetailsState,
     onBackClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onSaveClick: (name: String, email: String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -50,7 +53,7 @@ fun Screen(
             .fillMaxSize()
     ) {
         BackButton(onBackClick)
-        UserCard(state, onDeleteClick)
+        UserCard(state, onDeleteClick, onSaveClick)
     }
 }
 
@@ -73,7 +76,12 @@ fun BackButton(onBackClick: () -> Unit) {
 
 
 @Composable
-fun UserCard(state: ContactModel, onDeleteClick: () -> Unit) {
+fun UserCard(
+    state: ContactDetailsState,
+    onDeleteClick: () -> Unit,
+    onSaveClick: (name: String, email: String) -> Unit
+) {
+
 
     Row(
         modifier = Modifier
@@ -89,7 +97,7 @@ fun UserCard(state: ContactModel, onDeleteClick: () -> Unit) {
         ) {
             val painter =
                 rememberAsyncImagePainter(
-                    model = state.picture
+                    model = state.contact.picture
                 )
             val transition by animateFloatAsState(
                 targetValue = if (painter.state is State.Success) 1f else 0f
@@ -99,7 +107,17 @@ fun UserCard(state: ContactModel, onDeleteClick: () -> Unit) {
                 modifier = Modifier
                     .padding(20.dp)
             ) {
-
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    Image(
+                        painterResource(R.drawable.ic_edit),
+                        contentDescription = "Edit",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .noRippleClickable {
+                                state.isEdit = true
+                            },
+                    )
+                }
                 Box(modifier = Modifier.fillMaxWidth()) {
 
                     if (painter.state is State.Loading) {
@@ -117,29 +135,44 @@ fun UserCard(state: ContactModel, onDeleteClick: () -> Unit) {
                     )
                 }
 
-                Text(
-                    text = state.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                if (state.isEdit) {
+                    var name by rememberSaveable {
+                        mutableStateOf(state.contact.name)
+                    }
+                    var email by rememberSaveable {
+                        mutableStateOf(state.contact.email)
+                    }
 
-                Text(
-                    text = state.email,
-                    modifier = Modifier
-                        .fillMaxWidth().padding(start = 5.dp)
-                )
-                Spacer(modifier = Modifier.height(100.dp))
-                Button(
-                    onClick = onDeleteClick,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorAccent)),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(10.dp))
-                ) {
-                    Text(text = "Delete", fontSize = 16.sp)
+                    UserCardData_Edit(name, email, { name = it }, { email = it })
+                    Spacer(modifier = Modifier.height(100.dp))
+
+                    Button(
+                        onClick = {
+                            state.isEdit = false
+                            state.contact.name = name
+                            state.contact.email = email
+                            onSaveClick(name, email)
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                    ) {
+                        Text(text = "Save", fontSize = 16.sp)
+                    }
+                } else {
+                    UserCardData_Preview(state)
+                    Spacer(modifier = Modifier.height(100.dp))
+
+                    Button(
+                        onClick = onDeleteClick,
+                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorAccent)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                    ) {
+                        Text(text = "Delete", fontSize = 16.sp)
+                    }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
 
@@ -154,7 +187,7 @@ fun UserCard(state: ContactModel, onDeleteClick: () -> Unit) {
 }
 
 @Composable
-fun LoadingAnimation(modifier:Modifier) {
+fun LoadingAnimation(modifier: Modifier) {
     val strokeWidth = 5.dp
 
     CircularProgressIndicator(
@@ -168,4 +201,51 @@ fun LoadingAnimation(modifier:Modifier) {
         color = Color.LightGray,
         strokeWidth = strokeWidth,
     )
+}
+
+@Composable
+fun UserCardData_Preview(state: ContactDetailsState) {
+    Text(
+        text = state.contact.name,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+    )
+
+    Text(
+        text = state.contact.email,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 5.dp)
+    )
+}
+
+@Composable
+fun UserCardData_Edit(
+    name: String, email: String, onNameChanged: (newName: String) -> Unit,
+    onEmailChanged: (newEmail: String) -> Unit
+) {
+
+
+    BasicTextField(
+        value = name,
+        onValueChange = { onNameChanged(it) },
+        singleLine = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
+        textStyle = TextStyle.Default.copy(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+    )
+
+    BasicTextField(
+        value = email,
+        onValueChange = { onEmailChanged(it) },
+        singleLine = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 5.dp)
+    )
+
 }

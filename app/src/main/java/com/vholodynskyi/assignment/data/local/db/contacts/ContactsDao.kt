@@ -28,7 +28,7 @@ interface ContactsDao {
     suspend fun clearAllActive()
 
     @Query("SELECT * FROM Contact where userId == (:id) and isDeleted = 0")
-    fun getActiveContactById(id: String):Flow<DbContact>
+    suspend fun getActiveContactById(id: String):DbContact
 
     @Query("SELECT (case when count(*) = 0 then 1 else 0 end) FROM Contact ct where isDeleted = 0")
     fun isDBEmpty(): Boolean

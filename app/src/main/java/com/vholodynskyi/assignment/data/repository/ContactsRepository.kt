@@ -10,4 +10,5 @@ interface ContactsRepository {
     suspend fun delete(id: String)
     suspend fun repair(id: String)
     suspend fun isDBEmpty(): Boolean
+    suspend fun update(model: ContactModel)
 }

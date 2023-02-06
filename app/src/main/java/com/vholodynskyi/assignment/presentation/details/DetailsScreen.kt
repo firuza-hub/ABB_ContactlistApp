@@ -1,5 +1,6 @@
 package com.vholodynskyi.assignment.presentation.details
 
+import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -23,20 +25,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter.State
 import coil.compose.rememberAsyncImagePainter
 import com.vholodynskyi.assignment.R
 import com.vholodynskyi.assignment.domain.model.ContactModel
+import com.vholodynskyi.assignment.presentation.contactslist.ContactsListViewModel
+import com.vholodynskyi.assignment.util.Event
 import com.vholodynskyi.assignment.util.noRippleClickable
+import org.koin.androidx.compose.koinViewModel
 
-@Preview(showBackground = true)
 @Composable
 fun DetailsScreen(
-    state: ContactDetailsState = ContactDetailsState(),
-    onDeleteClick: () -> Unit = { println("delete") },
-    onBackClick: () -> Unit = { println("back") },
-    onSaveClick: (name: String, email: String) -> Unit = { _, _ -> println("save") }
+    id: String,
+    navController: NavController,
+    detailsViewModel: DetailsViewModel = koinViewModel()
 ) {
+    val onBackClick: () -> Unit = { navController.navigateUp() }
+    val onDeleteClick: () -> Unit = { detailsViewModel.delete() }
+    val onSaveClick: () -> Unit = { detailsViewModel.save() }
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = true)
+    {
+
+        detailsViewModel.id = id
+        detailsViewModel.getData()
+        detailsViewModel.eventFlow.collect { event ->
+            when (event) {
+                is Event.ShowToaster -> {
+                    Toast.makeText(
+                        context,
+                        event.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+    val state by detailsViewModel.state.collectAsState()
+
     Screen(state, onBackClick, onDeleteClick, onSaveClick)
 }
 
@@ -45,7 +73,7 @@ fun Screen(
     state: ContactDetailsState,
     onBackClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onSaveClick: (name: String, email: String) -> Unit
+    onSaveClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -53,7 +81,7 @@ fun Screen(
             .fillMaxSize()
     ) {
         BackButton(onBackClick)
-        UserCard(state, onDeleteClick, onSaveClick)
+        if(!state.isLoading) UserCard(state, onDeleteClick, onSaveClick)
     }
 }
 
@@ -79,10 +107,8 @@ fun BackButton(onBackClick: () -> Unit) {
 fun UserCard(
     state: ContactDetailsState,
     onDeleteClick: () -> Unit,
-    onSaveClick: (name: String, email: String) -> Unit
+    onSaveClick: () -> Unit
 ) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -107,16 +133,24 @@ fun UserCard(
                 modifier = Modifier
                     .padding(20.dp)
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    Image(
-                        painterResource(R.drawable.ic_edit),
-                        contentDescription = "Edit",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .noRippleClickable {
-                                state.isEdit = true
-                            },
-                    )
+                if(!state.isEdit) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Image(
+                            painterResource(R.drawable.ic_edit),
+                            contentDescription = "Edit",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .noRippleClickable {
+                                    state.isEdit = true
+                                },
+                        )
+                    }
+                }
+                else{
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
                 Box(modifier = Modifier.fillMaxWidth()) {
 
@@ -142,7 +176,7 @@ fun UserCard(
                     var email by rememberSaveable {
                         mutableStateOf(state.contact.email)
                     }
-
+                    println("GET_CONTACT - ${state.contact.name} ($name)")
                     UserCardData_Edit(name, email, { name = it }, { email = it })
                     Spacer(modifier = Modifier.height(100.dp))
 
@@ -151,7 +185,7 @@ fun UserCard(
                             state.isEdit = false
                             state.contact.name = name
                             state.contact.email = email
-                            onSaveClick(name, email)
+                            onSaveClick()
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
                         modifier = Modifier
@@ -218,7 +252,6 @@ fun UserCardData_Preview(state: ContactDetailsState) {
         text = state.contact.email,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 5.dp)
     )
 }
 
@@ -245,7 +278,6 @@ fun UserCardData_Edit(
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 5.dp)
     )
 
 }

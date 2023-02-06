@@ -16,7 +16,7 @@ data class ContactModel(
 
     fun toDbContact() = DbContact(
         userId = id,
-        firstName = name,
+        firstName = name.trim(),
         title = "",
         lastName = "",
         email = email ?: "",

@@ -9,4 +9,5 @@ class ContactDetailsState {
 
     var contact: ContactModel = ContactModel.NULL
     var isEdit by mutableStateOf(true)
+    var isLoading by mutableStateOf(true)
 }

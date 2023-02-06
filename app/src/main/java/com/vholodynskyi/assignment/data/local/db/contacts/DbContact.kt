@@ -17,7 +17,7 @@ data class DbContact(
 ) {
     fun toModel() = ContactModel(
         id = userId,
-        name = " $title $firstName $lastName",
+        name = "$title $firstName $lastName".trim(),
         email = email ?: "",
         picture = photo
     )

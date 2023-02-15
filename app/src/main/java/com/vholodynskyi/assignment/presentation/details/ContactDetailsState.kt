@@ -8,6 +8,6 @@ import com.vholodynskyi.assignment.domain.model.ContactModel
 class ContactDetailsState {
 
     var contact: ContactModel = ContactModel.NULL
-    var isEdit by mutableStateOf(true)
+    var isEdit by mutableStateOf(false)
     var isLoading by mutableStateOf(true)
 }

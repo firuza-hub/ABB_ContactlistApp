@@ -22,15 +22,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter.State
 import coil.compose.rememberAsyncImagePainter
 import com.vholodynskyi.assignment.R
-import com.vholodynskyi.assignment.domain.model.ContactModel
-import com.vholodynskyi.assignment.presentation.contactslist.ContactsListViewModel
 import com.vholodynskyi.assignment.util.Event
 import com.vholodynskyi.assignment.util.noRippleClickable
 import org.koin.androidx.compose.koinViewModel
@@ -42,7 +39,10 @@ fun DetailsScreen(
     detailsViewModel: DetailsViewModel = koinViewModel()
 ) {
     val onBackClick: () -> Unit = { navController.navigateUp() }
-    val onDeleteClick: () -> Unit = { detailsViewModel.delete() }
+    val onDeleteClick: () -> Unit = {
+        detailsViewModel.delete()
+        navController.navigateUp()
+    }
     val onSaveClick: () -> Unit = { detailsViewModel.save() }
 
     val context = LocalContext.current
@@ -81,7 +81,7 @@ fun Screen(
             .fillMaxSize()
     ) {
         BackButton(onBackClick)
-        if(!state.isLoading) UserCard(state, onDeleteClick, onSaveClick)
+        if (!state.isLoading) UserCard(state, onDeleteClick, onSaveClick)
     }
 }
 
@@ -133,7 +133,7 @@ fun UserCard(
                 modifier = Modifier
                     .padding(20.dp)
             ) {
-                if(!state.isEdit) {
+                if (!state.isEdit) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -148,8 +148,7 @@ fun UserCard(
                                 },
                         )
                     }
-                }
-                else{
+                } else {
                     Spacer(modifier = Modifier.height(24.dp))
                 }
                 Box(modifier = Modifier.fillMaxWidth()) {

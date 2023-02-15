@@ -117,7 +117,6 @@ fun UserCard(
         Card(
             modifier = Modifier
                 .padding(start = 30.dp, end = 30.dp, top = 12.dp, bottom = 80.dp),
-            backgroundColor = colorResource(R.color.cardview_light_background),
             shape = RoundedCornerShape(20.dp),
             elevation = 4.dp
         ) {

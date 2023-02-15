@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.vholodynskyi.assignment.presentation.contactslist.ContactListScreen
 import com.vholodynskyi.assignment.presentation.details.DetailsScreen
 
@@ -27,8 +28,9 @@ fun NavigationComponent() {
                 ) {
                     type = NavType.StringType
                     defaultValue = "-1"
-                }
-            )) {
+                }),
+            deepLinks = listOf(navDeepLink { uriPattern = "abb_contacts://" + Screen.DetailsScreen.route + "?contactId={contactId}" })
+        ) {
             DetailsScreen(
                 id = it.arguments?.getString("contactId") ?: "-1",
                 navController = navController

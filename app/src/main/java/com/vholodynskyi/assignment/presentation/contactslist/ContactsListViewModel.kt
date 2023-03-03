@@ -1,18 +1,16 @@
 package com.vholodynskyi.assignment.presentation.contactslist
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.vholodynskyi.assignment.util.NetworkResult
 import com.vholodynskyi.assignment.data.repository.ContactsRepository
 import com.vholodynskyi.assignment.domain.model.ContactModel
 import com.vholodynskyi.assignment.domain.usecase.GetContactsUseCase
 import com.vholodynskyi.assignment.presentation.base.BaseViewModel
+import com.vholodynskyi.assignment.util.Event
+import com.vholodynskyi.assignment.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ContactsListViewModel(
@@ -34,13 +32,14 @@ class ContactsListViewModel(
 
     fun refreshDbContacts() {
         viewModelScope.launch(Dispatchers.IO) {
+
+            eventChannel.send(Event.ShowToaster("REFRESH"))
             try {
                 _isLoading.value = true
                 repo.refreshDbContacts()
             } catch (ex: Exception) {
                 Log.e("REFRESH_FROM_REMOTE", ex.message.toString())
-            }
-            finally {
+            } finally {
                 _isLoading.value = false
             }
         }

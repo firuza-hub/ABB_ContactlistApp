@@ -1,6 +1,10 @@
 package com.vholodynskyi.assignment.di
 
 import androidx.room.Room
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.vholodynskyi.assignment.data.local.db.AppDatabase
 import com.vholodynskyi.assignment.data.remote.api.RetrofitServicesProvider
 import com.vholodynskyi.assignment.domain.usecase.GetContactUseCase
@@ -24,6 +28,17 @@ val appModule = module {
 
     single {
         GetContactsUseCase(get())
+    }
+
+
+    single {
+        FirebaseAuth.getInstance()
+    }
+    single {
+        Firebase.crashlytics
+    }
+    single {
+        Firebase.analytics
     }
 
     scope(named("DetailsViewModel")) {

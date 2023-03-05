@@ -54,7 +54,7 @@ class MainViewModel(
         Log.i("FLOW_TEST", "buildLoginIntent triggered")
         // Choose authentication providers
         val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.PhoneBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
